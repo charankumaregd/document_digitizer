@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Languages, Download, Undo, FileText } from 'lucide-react';
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Languages, Download, Undo, Loader2 } from "lucide-react";
+import { translateText, convertFile } from "../services/api";
 
 interface LocationState {
   text: string;
@@ -9,22 +10,27 @@ interface LocationState {
 
 export default function EditorPage() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { text: initialText, originalLanguage } = (location.state as LocationState) || {
-    text: '',
-    originalLanguage: 'eng'
-  };
+  const { text: initialText, originalLanguage } =
+    (location.state as LocationState) || {
+      text: "",
+      originalLanguage: "eng",
+    };
 
   const [text, setText] = useState(initialText);
-  const [targetLanguage, setTargetLanguage] = useState('eng');
-  const [outputFormat, setOutputFormat] = useState('txt');
+  const [targetLanguage, setTargetLanguage] = useState("eng");
+  const [outputFormat, setOutputFormat] = useState("txt");
   const [history, setHistory] = useState<string[]>([initialText]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleTextChange = (newText: string) => {
     setText(newText);
     setHistory([...history.slice(0, currentIndex + 1), newText]);
     setCurrentIndex(currentIndex + 1);
+    setError(null);
   };
 
   const handleUndo = () => {
@@ -35,36 +41,79 @@ export default function EditorPage() {
   };
 
   const handleTranslate = async () => {
+    if (!text) return;
+
+    setIsProcessing(true);
+    setIsTranslating(true);
+    setError(null);
+
     try {
-      // TODO: Send to backend for translation
-      // For now, just show a mock translation
-      const translatedText = `Translated: ${text}`;
-      handleTextChange(translatedText);
+      const result = await translateText(
+        text,
+        originalLanguage,
+        targetLanguage
+      );
+      if (result.text) {
+        handleTextChange(result.text);
+      } else {
+        throw new Error("No translation received");
+      }
     } catch (error) {
-      console.error('Error translating text:', error);
+      console.error("Error translating text:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to translate text"
+      );
+    } finally {
+      setIsProcessing(false);
+      setIsTranslating(false);
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    if (!text) return;
+
+    setIsProcessing(true);
+    setIsDownloading(true);
+    setError(null);
+
     try {
-      // For now, only support txt format until backend is ready
-      if (outputFormat !== 'txt') {
-        alert(`${outputFormat.toUpperCase()} format requires backend processing. Currently only TXT format is available.`);
-        return;
+      const result = await convertFile(text, outputFormat);
+      if (!result.file_data) {
+        throw new Error("No file data received");
       }
 
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      // Decode base64 and create blob
+      const binaryString = window.atob(result.file_data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // Create blob and download
+      const blob = new Blob([bytes], {
+        type:
+          outputFormat === "txt"
+            ? "text/plain"
+            : outputFormat === "pdf"
+            ? "application/pdf"
+            : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `document.txt`;
+      link.download = `document.${outputFormat}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading file:', error);
-      alert('Failed to download file. Please try again.');
+      console.error("Error downloading file:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to download file"
+      );
+    } finally {
+      setIsProcessing(false);
+      setIsDownloading(false);
     }
   };
 
@@ -76,7 +125,7 @@ export default function EditorPage() {
             <h1 className="text-3xl font-bold text-gray-900">Edit Document</h1>
             <button
               onClick={handleUndo}
-              disabled={currentIndex === 0}
+              disabled={currentIndex === 0 || isProcessing}
               className="p-2 text-gray-600 hover:text-gray-900 disabled:text-gray-400"
               title="Undo"
             >
@@ -84,11 +133,18 @@ export default function EditorPage() {
             </button>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg">
+              {error}
+            </div>
+          )}
+
           <div className="space-y-6">
             <textarea
               value={text}
               onChange={(e) => handleTextChange(e.target.value)}
-              className="w-full h-64 p-4 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              disabled={isProcessing}
+              className="w-full h-64 p-4 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50"
               placeholder="Your text will appear here..."
             />
 
@@ -100,7 +156,8 @@ export default function EditorPage() {
                 <select
                   value={targetLanguage}
                   onChange={(e) => setTargetLanguage(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  disabled={isProcessing || !text}
+                  className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50"
                 >
                   <option value="eng">English</option>
                   <option value="fra">French</option>
@@ -116,27 +173,38 @@ export default function EditorPage() {
                 <select
                   value={outputFormat}
                   onChange={(e) => setOutputFormat(e.target.value)}
-                  className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  disabled={isProcessing || !text}
+                  className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50"
                 >
                   <option value="txt">Plain Text (.txt)</option>
-                  <option value="doc">Word Document (.doc)</option>
                   <option value="pdf">PDF Document (.pdf)</option>
+                  <option value="doc">Word Document (.doc)</option>
                 </select>
               </div>
 
               <div className="flex space-x-4">
                 <button
                   onClick={handleTranslate}
-                  className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2"
+                  disabled={isProcessing || !text}
+                  className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors flex items-center justify-center space-x-2"
                 >
-                  <Languages className="h-5 w-5" />
+                  {isTranslating ? (
+                    <Loader2 className="animate-spin h-5 w-5" />
+                  ) : (
+                    <Languages className="h-5 w-5" />
+                  )}
                   <span>Translate</span>
                 </button>
                 <button
                   onClick={handleDownload}
-                  className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                  disabled={isProcessing || !text}
+                  className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-400 transition-colors flex items-center justify-center space-x-2"
                 >
-                  <Download className="h-5 w-5" />
+                  {isDownloading ? (
+                    <Loader2 className="animate-spin h-5 w-5" />
+                  ) : (
+                    <Download className="h-5 w-5" />
+                  )}
                   <span>Download</span>
                 </button>
               </div>

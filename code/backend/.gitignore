@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env
+.venv/
+env/
+*.env
+
+# Package dependencies
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# Flask / Python-specific logs and cache
+instance/
+*.log
+*.sqlite3
+db.sqlite3
+migrations/
+
+# Compiled C extensions
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS / Linux / Windows system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Tesseract OCR-related files (if any)
+tessdata/
+tesseract.log
+
+# PDF2Image temp files
+pdf2image_cache/
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore Python cache
+__pycache__/
+*.pyc

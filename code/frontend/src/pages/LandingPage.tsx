@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import { FileText, Languages, Download } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { FileText, Languages, Download } from "lucide-react";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -8,13 +8,16 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">Document Digitizer</h1>
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Document Digitizer
+          </h1>
           <p className="text-xl text-gray-600 mb-12">
-            Transform your documents into editable text with AI-powered OCR and translation
+            Transform your documents into editable text with AI-powered OCR and
+            translation
           </p>
 
           <button
-            onClick={() => navigate('/upload')}
+            onClick={() => navigate("/upload")}
             className="bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors"
           >
             Start Digitizing

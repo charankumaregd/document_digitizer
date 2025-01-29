@@ -1,12 +1,14 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Upload, FileText, Loader2 } from 'lucide-react';
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Upload, FileText, Loader2 } from "lucide-react";
+import { extractText } from "../services/api";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [language, setLanguage] = useState('eng');
+  const [language, setLanguage] = useState("eng");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -19,6 +21,7 @@ export default function UploadPage() {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(selectedFile);
+      setError(null);
     }
   };
 
@@ -32,6 +35,7 @@ export default function UploadPage() {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(droppedFile);
+      setError(null);
     }
   };
 
@@ -39,17 +43,21 @@ export default function UploadPage() {
     if (!file) return;
 
     setIsProcessing(true);
+    setError(null);
+
     try {
-      // TODO: Send to backend
-      // For now, just navigate to editor
-      navigate('/editor', { 
-        state: { 
-          text: "Sample extracted text",
-          originalLanguage: language 
-        } 
+      const result = await extractText(file, language);
+      navigate("/editor", {
+        state: {
+          text: result.text,
+          originalLanguage: result.language,
+        },
       });
     } catch (error) {
-      console.error('Error processing file:', error);
+      console.error("Error processing file:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to process file"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -81,6 +89,12 @@ export default function UploadPage() {
             <p className="text-sm text-gray-500">PDF, PNG, JPG</p>
           </div>
 
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-lg">
+              {error}
+            </div>
+          )}
+
           {preview && (
             <div className="mt-8 space-y-6">
               <div className="relative rounded-lg overflow-hidden">
@@ -105,7 +119,6 @@ export default function UploadPage() {
                     <option value="fra">French</option>
                     <option value="deu">German</option>
                     <option value="spa">Spanish</option>
-                    {/* Add more languages as needed */}
                   </select>
                 </div>
 
