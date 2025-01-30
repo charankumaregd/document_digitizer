@@ -4,6 +4,10 @@ import { FileText, Languages, Download } from "lucide-react";
 export default function LandingPage() {
   const navigate = useNavigate();
 
+  function handleClick() {
+    navigate("/upload");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-16">
@@ -17,7 +21,7 @@ export default function LandingPage() {
           </p>
 
           <button
-            onClick={() => navigate("/upload")}
+            onClick={handleClick}
             className="bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition-colors"
           >
             Start Digitizing

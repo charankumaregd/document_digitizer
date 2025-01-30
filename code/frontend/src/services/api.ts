@@ -14,10 +14,10 @@ export interface ConvertResponse {
   format: string;
 }
 
-export const extractText = async (
+export async function extractText(
   file: File,
   language: string
-): Promise<ExtractResponse> => {
+): Promise<ExtractResponse> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("language", language);
@@ -45,13 +45,13 @@ export const extractText = async (
     }
     throw new Error("Failed to process file");
   }
-};
+}
 
-export const translateText = async (
+export async function translateText(
   text: string,
   sourceLang: string,
   targetLang: string
-): Promise<TranslateResponse> => {
+): Promise<TranslateResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/translate`, {
       method: "POST",
@@ -82,12 +82,12 @@ export const translateText = async (
     }
     throw new Error("Failed to translate text");
   }
-};
+}
 
-export const convertFile = async (
+export async function convertFile(
   text: string,
   format: string
-): Promise<ConvertResponse> => {
+): Promise<ConvertResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/convert`, {
       method: "POST",
@@ -117,4 +117,4 @@ export const convertFile = async (
     }
     throw new Error("Failed to convert file");
   }
-};
+}

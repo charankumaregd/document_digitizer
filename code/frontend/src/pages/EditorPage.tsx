@@ -17,6 +17,7 @@ export default function EditorPage() {
     };
 
   const [text, setText] = useState(initialText);
+  const [sourceLanguage, setSourceLanguage] = useState(originalLanguage);
   const [targetLanguage, setTargetLanguage] = useState("eng");
   const [outputFormat, setOutputFormat] = useState("txt");
   const [history, setHistory] = useState<string[]>([initialText]);
@@ -26,21 +27,21 @@ export default function EditorPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleTextChange = (newText: string) => {
+  function handleTextChange(newText: string) {
     setText(newText);
     setHistory([...history.slice(0, currentIndex + 1), newText]);
     setCurrentIndex(currentIndex + 1);
     setError(null);
-  };
+  }
 
-  const handleUndo = () => {
+  function handleUndo() {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setText(history[currentIndex - 1]);
     }
-  };
+  }
 
-  const handleTranslate = async () => {
+  async function handleTranslate() {
     if (!text) return;
 
     setIsProcessing(true);
@@ -48,13 +49,10 @@ export default function EditorPage() {
     setError(null);
 
     try {
-      const result = await translateText(
-        text,
-        originalLanguage,
-        targetLanguage
-      );
+      const result = await translateText(text, sourceLanguage, targetLanguage);
       if (result.text) {
         handleTextChange(result.text);
+        setSourceLanguage(targetLanguage);
       } else {
         throw new Error("No translation received");
       }
@@ -67,9 +65,9 @@ export default function EditorPage() {
       setIsProcessing(false);
       setIsTranslating(false);
     }
-  };
+  }
 
-  const handleDownload = async () => {
+  async function handleDownload() {
     if (!text) return;
 
     setIsProcessing(true);
@@ -82,14 +80,12 @@ export default function EditorPage() {
         throw new Error("No file data received");
       }
 
-      // Decode base64 and create blob
       const binaryString = window.atob(result.file_data);
       const bytes = new Uint8Array(binaryString.length);
       for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
       }
 
-      // Create blob and download
       const blob = new Blob([bytes], {
         type:
           outputFormat === "txt"
@@ -115,7 +111,7 @@ export default function EditorPage() {
       setIsProcessing(false);
       setIsDownloading(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">

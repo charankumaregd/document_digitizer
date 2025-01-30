@@ -12,7 +12,7 @@ export default function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
@@ -23,9 +23,9 @@ export default function UploadPage() {
       reader.readAsDataURL(selectedFile);
       setError(null);
     }
-  };
+  }
 
-  const handleDrop = (event: React.DragEvent) => {
+  function handleDrop(event: React.DragEvent) {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile) {
@@ -37,9 +37,9 @@ export default function UploadPage() {
       reader.readAsDataURL(droppedFile);
       setError(null);
     }
-  };
+  }
 
-  const handleSubmit = async () => {
+  async function handleSubmit() {
     if (!file) return;
 
     setIsProcessing(true);
@@ -61,7 +61,7 @@ export default function UploadPage() {
     } finally {
       setIsProcessing(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
@@ -86,7 +86,7 @@ export default function UploadPage() {
             />
             <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <p className="text-gray-600">Click to upload or drag and drop</p>
-            <p className="text-sm text-gray-500">PDF, PNG, JPG</p>
+            <p className="text-sm text-gray-500">PDF, PNG, JPG, JPEG</p>
           </div>
 
           {error && (
