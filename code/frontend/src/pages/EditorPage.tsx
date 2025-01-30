@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Languages, Download, Undo, Loader2 } from "lucide-react";
+import { Languages, Download, Loader2 } from "lucide-react";
 import { translateText, convertFile } from "../services/api";
 
 interface LocationState {
@@ -20,8 +20,6 @@ export default function EditorPage() {
   const [sourceLanguage, setSourceLanguage] = useState(originalLanguage);
   const [targetLanguage, setTargetLanguage] = useState("eng");
   const [outputFormat, setOutputFormat] = useState("txt");
-  const [history, setHistory] = useState<string[]>([initialText]);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -29,16 +27,7 @@ export default function EditorPage() {
 
   function handleTextChange(newText: string) {
     setText(newText);
-    setHistory([...history.slice(0, currentIndex + 1), newText]);
-    setCurrentIndex(currentIndex + 1);
     setError(null);
-  }
-
-  function handleUndo() {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setText(history[currentIndex - 1]);
-    }
   }
 
   async function handleTranslate() {
@@ -117,17 +106,9 @@ export default function EditorPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Edit Document</h1>
-            <button
-              onClick={handleUndo}
-              disabled={currentIndex === 0 || isProcessing}
-              className="p-2 text-gray-600 hover:text-gray-900 disabled:text-gray-400"
-              title="Undo"
-            >
-              <Undo className="h-5 w-5" />
-            </button>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-900 text-center mb-6">
+            Edit Document
+          </h1>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg">
@@ -144,7 +125,7 @@ export default function EditorPage() {
               placeholder="Your text will appear here..."
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Target Language
@@ -178,7 +159,7 @@ export default function EditorPage() {
                 </select>
               </div>
 
-              <div className="flex space-x-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 mt-4 gap-4">
                 <button
                   onClick={handleTranslate}
                   disabled={isProcessing || !text}
