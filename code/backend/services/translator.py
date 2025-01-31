@@ -39,7 +39,6 @@ class Translator:
         """Convert ISO language codes to googletrans format."""
         code = code.lower()
         code_mapping = {
-            'asm': 'as',  # Assamese
             'ben': 'bn',  # Bengali
             'eng': 'en',  # English
             'guj': 'gu',  # Gujarati
