@@ -6,7 +6,7 @@ import { extractText } from "../services/api";
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [language, setLanguage] = useState("eng");
+  const [language, setLanguage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,10 +115,20 @@ export default function UploadPage() {
                     onChange={(e) => setLanguage(e.target.value)}
                     className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   >
+                    <option value="">Select Language</option>
+                    <option value="asm">Assamese</option>
+                    <option value="ben">Bengali</option>
                     <option value="eng">English</option>
-                    <option value="fra">French</option>
-                    <option value="deu">German</option>
-                    <option value="spa">Spanish</option>
+                    <option value="guj">Gujarati</option>
+                    <option value="hin">Hindi</option>
+                    <option value="kan">Kannada</option>
+                    <option value="mal">Malayalam</option>
+                    <option value="mar">Marathi</option>
+                    <option value="ori">Odia</option>
+                    <option value="pun">Punjabi</option>
+                    <option value="tam">Tamil</option>
+                    <option value="tel">Telugu</option>
+                    <option value="urd">Urdu</option>
                   </select>
                 </div>
 

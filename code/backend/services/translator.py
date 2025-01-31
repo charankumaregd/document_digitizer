@@ -39,10 +39,19 @@ class Translator:
         """Convert ISO language codes to googletrans format."""
         code = code.lower()
         code_mapping = {
-            'eng': 'en',
-            'fra': 'fr',
-            'deu': 'de',
-            'spa': 'es',
-            # Add more mappings as needed
+            'asm': 'as',  # Assamese
+            'ben': 'bn',  # Bengali
+            'eng': 'en',  # English
+            'guj': 'gu',  # Gujarati
+            'hin': 'hi',  # Hindi
+            'kan': 'kn',  # Kannada
+            'mal': 'ml',  # Malayalam
+            'mar': 'mr',  # Marathi
+            'ori': 'or',  # Odia
+            'pun': 'pa',  # Punjabi
+            'tam': 'ta',  # Tamil
+            'tel': 'te',  # Telugu
+            'urd': 'ur',  # Urdu
+            # Add more if need
         }
         return code_mapping.get(code, code)

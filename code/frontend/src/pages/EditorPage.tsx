@@ -13,12 +13,12 @@ export default function EditorPage() {
   const { text: initialText, originalLanguage } =
     (location.state as LocationState) || {
       text: "",
-      originalLanguage: "eng",
+      originalLanguage: "",
     };
 
   const [text, setText] = useState(initialText);
   const [sourceLanguage, setSourceLanguage] = useState(originalLanguage);
-  const [targetLanguage, setTargetLanguage] = useState("eng");
+  const [targetLanguage, setTargetLanguage] = useState("");
   const [outputFormat, setOutputFormat] = useState("txt");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -136,10 +136,20 @@ export default function EditorPage() {
                   disabled={isProcessing || !text}
                   className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50"
                 >
+                  <option value="">Select Language</option>
+                  <option value="asm">Assamese</option>
+                  <option value="ben">Bengali</option>
                   <option value="eng">English</option>
-                  <option value="fra">French</option>
-                  <option value="deu">German</option>
-                  <option value="spa">Spanish</option>
+                  <option value="guj">Gujarati</option>
+                  <option value="hin">Hindi</option>
+                  <option value="kan">Kannada</option>
+                  <option value="mal">Malayalam</option>
+                  <option value="mar">Marathi</option>
+                  <option value="ori">Odia</option>
+                  <option value="pun">Punjabi</option>
+                  <option value="tam">Tamil</option>
+                  <option value="tel">Telugu</option>
+                  <option value="urd">Urdu</option>
                 </select>
               </div>
 
@@ -155,14 +165,14 @@ export default function EditorPage() {
                 >
                   <option value="txt">Plain Text (.txt)</option>
                   <option value="pdf">PDF Document (.pdf)</option>
-                  <option value="doc">Word Document (.doc)</option>
+                  <option value="docx">Word Document (.docx)</option>
                 </select>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 mt-4 gap-4">
                 <button
                   onClick={handleTranslate}
-                  disabled={isProcessing || !text}
+                  disabled={isProcessing || !text || !targetLanguage}
                   className="flex-1 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors flex items-center justify-center space-x-2"
                 >
                   {isTranslating ? (

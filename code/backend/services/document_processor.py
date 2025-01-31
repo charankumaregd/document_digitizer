@@ -11,7 +11,7 @@ class DocumentProcessor:
         if not os.path.exists(self.temp_folder):
             os.makedirs(self.temp_folder)
 
-    def process_document(self, filepath, language='eng'):
+    def process_document(self, filepath, language='auto'):
         """Process document and extract text."""
         file_extension = filepath.split('.')[-1].lower()
         
@@ -66,7 +66,10 @@ class DocumentProcessor:
             cv2.imwrite(temp_file, gray)
 
             # Perform OCR
-            text = pytesseract.image_to_string(Image.open(temp_file), lang=language)
+            if language == 'auto':
+                text = pytesseract.image_to_string(Image.open(temp_file))
+            else:
+                text = pytesseract.image_to_string(Image.open(temp_file), lang=language)
 
             # Remove temporary file
             os.remove(temp_file)

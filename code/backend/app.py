@@ -28,7 +28,7 @@ def extract_text():
             return jsonify({'error': 'No file provided'}), 400
         
         file = request.files['file']
-        language = request.form.get('language', 'eng')
+        language = request.form.get('language', '') or 'auto'
         
         if file.filename == '':
             return jsonify({'error': 'No file selected'}), 400

@@ -10,7 +10,7 @@ class FileConverter:
         
         Args:
             text (str): Text to convert
-            format_type (str): Desired output format ('txt', 'pdf', 'doc')
+            format_type (str): Desired output format ('txt', 'pdf', 'docx')
             
         Returns:
             str: Base64 encoded file data
@@ -20,8 +20,8 @@ class FileConverter:
                 return self._convert_to_txt(text)
             elif format_type == 'pdf':
                 return self._convert_to_pdf(text)
-            elif format_type == 'doc':
-                return self._convert_to_doc(text)
+            elif format_type == 'docx':
+                return self._convert_to_docx(text)
             else:
                 raise ValueError(f"Unsupported format: {format_type}")
         
@@ -61,21 +61,21 @@ class FileConverter:
         except Exception as e:
             raise Exception(f"Error converting to PDF: {str(e)}")
 
-    def _convert_to_doc(self, text):
+    def _convert_to_docx(self, text):
         """Convert text to DOCX format."""
         try:
-            doc = Document()
-            doc.add_paragraph(text)
+            docx = Document()
+            docx.add_paragraph(text)
             
             # Save document to bytes buffer
             buffer = io.BytesIO()
-            doc.save(buffer)
+            docx.save(buffer)
             buffer.seek(0)
             
             # Get bytes and encode to base64
-            doc_bytes = buffer.getvalue()
-            base64_encoded = base64.b64encode(doc_bytes).decode('utf-8')
+            docx_bytes = buffer.getvalue()
+            base64_encoded = base64.b64encode(docx_bytes).decode('utf-8')
             return base64_encoded
         
         except Exception as e:
-            raise Exception(f"Error converting to DOC: {str(e)}")
+            raise Exception(f"Error converting to DOCX: {str(e)}")
