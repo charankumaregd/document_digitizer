@@ -7,8 +7,8 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 
 # Import the custom libraries
-from services.text_postprocessor import TextPostprocessor
 from services.text_translator import TextTranslator
+from services.text_postprocessor import TextPostprocessor
 from services.document_converter import DocumentConverter
 from services.document_processor import DocumentProcessor
 
