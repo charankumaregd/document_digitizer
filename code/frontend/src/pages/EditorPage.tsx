@@ -64,7 +64,7 @@ export default function EditorPage() {
     setError(null);
 
     try {
-      const result = await convertFile(text, outputFormat);
+      const result = await convertFile(text, outputFormat, sourceLanguage);
       if (!result.file_data) {
         throw new Error("No file data received");
       }

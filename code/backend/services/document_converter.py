@@ -44,6 +44,7 @@ class DocumentConverter:
         Args:
             text (str): Text to convert
             format_type (str): Desired output format ("txt", "pdf", "docx")
+            language (str): Text language
             
         Returns:
             Dict[str, str]: {"file_data": base64_encoded_document_data, "format": converted_format}

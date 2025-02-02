@@ -161,7 +161,7 @@ def convert() -> Dict[str, str]:
         data: Dict[str, str] = request.get_json()
 
         # Check if the required fields exists in data
-        required_fields: list[str] = ["text", "format"]
+        required_fields: list[str] = ["text", "format", "language"]
 
         for field in required_fields:
             if field not in data:
@@ -170,12 +170,13 @@ def convert() -> Dict[str, str]:
         # Destructure the data
         text: str = data["text"]
         format: str = data["format"]
+        language: str = data["language"]
 
         # Create an instance of the DocumentConverter class
         document_converter: DocumentConverter = DocumentConverter()
 
         # Convert the document to required format
-        result: Dict[str, str] = document_converter.convert(text, format)
+        result: Dict[str, str] = document_converter.convert(text, format, language)
 
         # Destructure the result
         converted_file_data: str = result["file_data"]

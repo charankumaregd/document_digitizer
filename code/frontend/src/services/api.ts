@@ -86,7 +86,8 @@ export async function translateText(
 
 export async function convertFile(
   text: string,
-  format: string
+  format: string,
+  language: string
 ): Promise<ConvertResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/convert`, {
@@ -97,6 +98,7 @@ export async function convertFile(
       body: JSON.stringify({
         text,
         format,
+        language,
       }),
     });
 
