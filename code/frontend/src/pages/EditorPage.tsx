@@ -145,7 +145,7 @@ export default function EditorPage() {
                   <option value="mal">Malayalam</option>
                   <option value="mar">Marathi</option>
                   <option value="ori">Odia</option>
-                  <option value="pun">Punjabi</option>
+                  <option value="pan">Punjabi</option>
                   <option value="tam">Tamil</option>
                   <option value="tel">Telugu</option>
                   <option value="urd">Urdu</option>
