@@ -1,48 +1,44 @@
-# Byte-compiled / optimized / DLL files
+# Python
+*.pyc
+*.pyo
+*.pyd
 __pycache__/
-*.py[cod]
-*$py.class
+*.db
+*.sqlite3
+
+# Fonts
+fonts/*.pkl
 
 # Virtual environment
-venv/
-.env
 .venv/
+venv/
+.env/
 env/
-*.env
 
-# Package dependencies
-Pipfile
-Pipfile.lock
-poetry.lock
-
-# Flask / Python-specific logs and cache
+# Flask-specific files
 instance/
 *.log
-*.sqlite3
-db.sqlite3
-migrations/
 
-# Compiled C extensions
-*.so
-
-# Jupyter Notebook checkpoints
+# Jupyter Notebook files
 .ipynb_checkpoints
 
-# macOS / Linux / Windows system files
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Tesseract OCR-related files (if any)
-tessdata/
-tesseract.log
-
-# PDF2Image temp files
-pdf2image_cache/
-
-# Ignore VS Code settings
+# My IDE's settings (if using PyCharm, VS Code, etc.)
 .vscode/
+.idea/
 
-# Ignore Python cache
-__pycache__/
-*.pyc
+# Node modules if you use any frontend framework
+node_modules/
+
+# Python package distribution files
+*.egg-info/
+dist/
+build/
+
+# Configuration files (if any)
+*.env
+
+# MacOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db

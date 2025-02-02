@@ -1,95 +1,192 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
+# Import the required libraries
 import os
-from services.document_processor import DocumentProcessor
-from services.translator import Translator
-from services.file_converter import FileConverter
+from typing import Dict
+from flask_cors import CORS
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
 
-app = Flask(__name__)
+# Import the custom libraries
+from services.text_postprocessor import TextPostprocessor
+from services.text_translator import TextTranslator
+from services.document_converter import DocumentConverter
+from services.document_processor import DocumentProcessor
+
+# Create flask app
+app: Flask = Flask(__name__)
+
+# Use cors
 CORS(app)
 
 # Configuration
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+UPLOAD_FOLDER: str = "uploads"
+ALLOWED_EXTENSIONS: set[str] = {"pdf", "png", "jpg", "jpeg"}
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_file(filename: str) -> bool:
+    """
+    Verifies if the uploaded file has an allowed extension.
 
-@app.route('/api/extract', methods=['POST'])
-def extract_text():
+    Args:
+        filename (str): The filename to check.
+    
+    Returns:
+        bool: True if the file is allowed, False otherwise.
+    """
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Default route
+@app.route("/", methods=["GET"])
+def index() -> Dict[str, str]:
+    return jsonify({"message": "Server is running"})
+
+# Api routes
+
+# Extract the content
+@app.route("/api/extract", methods=["POST"])
+def extract() -> Dict[str, str]:
+    """
+    Extract the content from the document.
+    
+    Returns:
+        Dict[str, str]: {"text": content_extracted, "language": content_language}
+    """
     try:
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file provided'}), 400
+        # Check if the file exists in request.files
+        if "file" not in request.files:
+            return jsonify({"error": "Missing required field: file"}), 400
+
+        # Get the file and language from request
+        file: FileStorage = request.files["file"]
+        language: str = request.form.get("language", "")  # Default to ""
+
+        # Check for "" explicitly
+        if language == "":
+            language = "auto"
         
-        file = request.files['file']
-        language = request.form.get('language', '') or 'auto'
-        
-        if file.filename == '':
-            return jsonify({'error': 'No file selected'}), 400
+        # Check filename for "" explicitly
+        if file.filename == "":
+            return jsonify({"error": "No file selected"}), 400
         
         if not allowed_file(file.filename):
-            return jsonify({'error': 'File type not allowed'}), 400
-        
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            return jsonify({"error": "File type not allowed"}), 400
+
+        # Store the file in upload folder
+        filename: str = secure_filename(file.filename)
+        filepath: str = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(filepath)
-        
-        processor = DocumentProcessor()
-        text = processor.process_document(filepath, language)
-        
+
+        # Create an instance of the DocumentProcessor class
+        processor: DocumentProcessor = DocumentProcessor()
+
+        # Process the document to extract content
+        result: Dict[str, str] = processor.process_document(filepath, language)
+
+        # Destructure the result
+        content_extracted: str = result["text"]
+        content_language: str = result["language"]
+    
         # Clean up the uploaded file
         os.remove(filepath)
-        
-        return jsonify({
-            'text': text,
-            'language': language
-        })
+
+        # Return the extracted text and language
+        return jsonify({"text": content_extracted, "language": content_language}), 200
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/api/translate', methods=['POST'])
-def translate_text():
+
+# Translate the content
+@app.route("/api/translate", methods=["POST"])
+async def translate() -> Dict[str, str]:
+    """
+    Translate the content to target language.
+    
+    Returns:
+        Dict[str, str]: {"text": translated_postprocessed_text}
+    """
     try:
-        data = request.get_json()
-        if not data or 'text' not in data or 'target_language' not in data:
-            return jsonify({'error': 'Missing required fields'}), 400
-        
-        translator = Translator()
-        translated_text = translator.translate(
-            data['text'],
-            data.get('source_language', 'auto'),
-            data['target_language']
-        )
-        
-        return jsonify({'text': translated_text})
-    
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        # Get the request (text, source language and target language)
+        data: Dict[str, str] = request.get_json()
 
-@app.route('/api/convert', methods=['POST'])
-def convert_file():
+        # Check if the required fields exists in data
+        required_fields: list[str] = ["text", "source_language", "target_language"]
+
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+        
+        # Destructure the data
+        text: str = data["text"]
+        source_language: str = data["source_language"]
+        target_language: str = data["target_language"]
+
+        # Create an instance of the TextTranslator class
+        translator: TextTranslator = TextTranslator()
+
+        # Translate to target language
+        translated_text: str = await translator.translate(text, source_language, target_language)
+
+        # Create an instance of TextPostprocessor class
+        text_postprocessor: TextPostprocessor = TextPostprocessor(target_language)
+
+        # Postprocess the translated text
+        result: Dict[str, str] = text_postprocessor.process(translated_text)
+        
+        # Destructure the postprocessed text
+        translated_postprocessed_text: str = result["text"]
+
+        # Return the postprocessed text
+        return jsonify({"text": translated_postprocessed_text}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# Convert to document
+@app.route("/api/convert", methods=["POST"])
+def convert() -> Dict[str, str]:
+    """
+    Convert the document to required format.
+    
+    Returns:
+        Dict[str, str]: {"file_data": converted_file_data, "format": converted_format}
+    """
     try:
-        data = request.get_json()
-        if not data or 'text' not in data or 'format' not in data:
-            return jsonify({'error': 'Missing required fields'}), 400
+        # Get the request (text and format)
+        data: Dict[str, str] = request.get_json()
+
+        # Check if the required fields exists in data
+        required_fields: list[str] = ["text", "format"]
+
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
         
-        converter = FileConverter()
-        file_data = converter.convert(data['text'], data['format'])
-        
-        return jsonify({
-            'file_data': file_data,
-            'format': data['format']
-        })
+        # Destructure the data
+        text: str = data["text"]
+        format: str = data["format"]
+
+        # Create an instance of the DocumentConverter class
+        document_converter: DocumentConverter = DocumentConverter()
+
+        # Convert the document to required format
+        result: Dict[str, str] = document_converter.convert(text, format)
+
+        # Destructure the result
+        converted_file_data: str = result["file_data"]
+        converted_format: str = result["format"]
+
+        # Return converted file data and converted format
+        return jsonify({"file_data": converted_file_data, "format": converted_format}), 200
     
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+# Entry point
+if __name__ == "__main__":
+    app.run(debug=True)

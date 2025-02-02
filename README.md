@@ -63,35 +63,49 @@ cd frontend
 npm install
 ```
 
-### 4. Install backend dependencies:
+### 4. Create the virtual environment for backend:
+
+```bash
+cd backend
+python -m venv .venv
+```
+
+### 5. Activate the virtual environment
+
+```bash
+.venv\Scripts\Activate
+```
+
+### 6. Install backend dependencies:
 
 ```sh
-cd backend
 pip install -r requirements.txt
 ```
 
-### 5. Set up the environment variables:
-
-**For backend:** Copy the `.env.example` file to `.env` inside the `backend` folder and configure the necessary environment variables.
-
-```sh
-cp .env.example .env
-```
+### 7. Set up the environment variables:
 
 **For frontend:** Copy the `.env.example` file to `.env` inside the `frontend` folder and configure the necessary environment variables.
 
 ```sh
+cd frontend
 cp .env.example .env
 ```
 
-### 6. Start the backend server:
+### 8. To test run individual modules in backend:
+
+```bash
+cd backend
+python -m <package_name>.<module_name>
+```
+
+### 9. Start the backend server:
 
 ```sh
 cd backend
-python app.py
+flask run
 ```
 
-### 7. Start the frontend:
+### 10. Start the frontend:
 
 ```sh
 cd frontend
