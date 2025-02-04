@@ -44,7 +44,7 @@ class DocumentConverter:
         Args:
             text (str): Text to convert
             format_type (str): Desired output format ("txt", "pdf", "docx")
-            language (str): Text language
+            language (str): Text language, Defaults to "eng"
             
         Returns:
             Dict[str, str]: {"file_data": base64_encoded_document_data, "format": converted_format}
@@ -92,12 +92,13 @@ class DocumentConverter:
         except Exception as e:
             raise Exception(f"Error converting to txt: {str(e)}")
 
-    def _convert_to_pdf(self, text: str, language: str = "eng") -> str:
+    def _convert_to_pdf(self, text: str, language: str) -> str:
         """
         Convert text to pdf format.
 
         Args:
             text (str): Text to convert
+            language (str): Text language
         
         Returns:
             str: Base64 encoded document data
@@ -142,12 +143,13 @@ class DocumentConverter:
         except Exception as e:
             raise Exception(f"Error converting to pdf: {str(e)}")
 
-    def _convert_to_docx(self, text: str, language: str = "eng") -> str:
+    def _convert_to_docx(self, text: str, language: str) -> str:
         """
         Convert text to docx format.
 
         Args:
             text (str): Text to convert
+            language (str): Text language
         
         Returns:
             str: Base64 encoded document data
