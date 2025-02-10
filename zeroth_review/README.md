@@ -8,40 +8,42 @@ An OCR-Based Solution for Digitizing Handwritten Old Documents with Regional Lan
 | Arunprasad S      | 921321205015 |
 | Dharani Dharan R  | 921321205032 |
 
-| Mentor            | Department             | Institution                                |
-| ----------------- | ---------------------- | ------------------------------------------ |
-| Mrs. A. Sangeetha | Information Technology | PSNA College of Engineering and Technology |
+| Mentor                                                                       |
+| ---------------------------------------------------------------------------- |
+| Mrs. A. Sangeetha, M.E., Ph.D., Assistant Professor - Information Technology |
+
+| Date       |
+| ---------- |
+| 12/02/2025 |
 
 ## Abstract
 
-The preservation and accessibility of handwritten old documents, particularly those in regional languages, pose significant challenges due to the diversity in handwriting styles, material degradation over time, and the complexities of translating text into regional languages. These challenges limit public access to valuable documents, emphasizing the need for efficient digitization solutions.
-
-This idea presents an Optical Character Recognition (OCR)-based solution aimed at digitizing handwritten, old registered documents and translating them into regional languages. The proposed system utilizes advanced OCR technology to convert scanned images of handwritten records into machine-readable text. Furthermore, a regional language translation model is integrated to ensure the translation of the digitized content into local languages, thereby enhancing public accessibility.
-
-Preliminary results indicate that the OCR system efficiently handles various handwriting styles, while the translation model ensures the generation of region-specific language outputs. This approach offers a promising solution for preserving and making old documents more accessible to a broader audience.
+The digitization of handwritten old documents in regional languages is challenging due to diverse handwriting styles, material degradation, and translation complexities, limiting public access to valuable records. This project proposes an OCR-based system that converts handwritten documents into machine-readable text and translates them into regional languages using advanced OCR and language translation models. Preliminary results show effective handling of handwriting variations and accurate regional translations, offering a promising solution for preserving and enhancing the accessibility of old documents.
 
 ## Problem statement
+
+Many old registered documents exist only in handwritten form, making them difficult to access and interpret. Aging, ink fading, and script variations further complicate their readability. Traditional OCR systems struggle with handwritten text, especially in regional languages with complex character shapes.
 
 How might we develop an AI or OCR solution to digitize and convert handwritten, old registered documents into a readable and accessible format in regional languages improving public access and readability of historical records?
 
 ## Objective
 
-- Develop an AI-powered OCR system for digitizing handwritten and old registered documents.
+Utilize advanced OCR to extract text from handwritten old documents, handling various handwriting styles and degraded texts with high accuracy.
 
-- Ensure accurate text recognition across multiple regional languages.
+Support multiple regional languages for precise text extraction and translation while ensuring context-aware translations that preserve meaning and linguistic nuances.
 
-- Enhance document clarity and readability for improved accessibility.
+Apply noise reduction, binarization, and contrast enhancement to improve visibility. Post-processing techniques refine extracted text for better readability and usability.
 
-- Preserve historical records by converting them into a machine-readable format.
+Safeguard old documents by converting them into machine-readable formats. Enable downloads in PDF, DOCX, and TXT formats for easy storage and sharing.
 
 ## Literature survey
 
-| Title                                                                                  | Author(s)                                                                                 | Year | Approach                                                                                                                                                                                                | Limitations                                                                                                                                             | Link                                          |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Document Image Analysis for Text Extraction and Translation                            | R. Thendral, G. Sudharsan, M. Subasri, M. K. Ragul                                        | 2024 | Uses OCR, neural networks, and machine translation techniques for text extraction and multilingual translation (English-Tamil).                                                                         | Requires high computational resources, struggles with handwritten and low quality scanned documents.                                                    | https://ieeexplore.ieee.org/document/10626260 |
-| Handwritten OCR for word in Indic Language using Deep Networks                         | Manish Kumar Gupta, Surya Vikram, Siddharth Dhawan, Atul Kurron                           | 2023 | Uses CNN-Transformer architecture with ResNet18 encoder and transformer decoder to recognize handwritten words in 8 Indian languages (Bangla, Gujarati, Gurumukhi, Hindi, Kannada, Odia, Telugu, Urdu). | Tamil and Malayalam not included due to dataset limitations; accuracy may vary across languages.                                                        | https://ieeexplore.ieee.org/document/10117106 |
-| Image to Text Recognition for Detecting Human and Machine Altered News in Social Media | Abdullah Kamal, Zaid Jamal, Gabriel Rosales, Brian Robinson, Zachary Satny, Haena Rathore | 2023 | Uses Google Cloud Vision API OCR to extract text from news images, demonstrating high accuracy text extraction and reliability for multilingual document digitization.                                  | Accuracy may be affected by variations in image quality and text distortions.                                                                           | https://ieeexplore.ieee.org/document/10325722 |
-| Scan.it Text Recognition, Translation and Conversion                                   | Minal Acharya, Priti Chouhan, Asmita Deshmukh                                             | 2019 | A web application using Tesseract OCR for text recognition and ImiTranslator for multilingual translation, focusing on Marathi language recognition.                                                    | Tesseract's accuracy varies significantly for handwritten text; limited to Marathi language; translation accuracy depends on ImiTranslator performance. | https://ieeexplore.ieee.org/document/9036818  |
+| Title                                                                                  | Author(s) & Year                                                                                 | Approach                                                                                                                                                                                                | Limitations                                                                                                                                            | Link                                          |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| Document Image Analysis for Text Extraction and Translation                            | R. Thendral, G. Sudharsan, M. Subasri, M. K. Ragul - 2024                                        | Uses OCR, neural networks, and machine translation techniques for text extraction and multilingual translation (English-Tamil).                                                                         | Requires high computational resources, struggles with handwritten and low quality scanned documents.                                                   | https://ieeexplore.ieee.org/document/10626260 |
+| Handwritten OCR for word in Indic Language using Deep Networks                         | Manish Kumar Gupta, Surya Vikram, Siddharth Dhawan, Atul Kurron - 2023                           | Uses CNN-Transformer architecture with ResNet18 encoder and transformer decoder to recognize handwritten words in 8 Indian languages (Bangla, Gujarati, Gurumukhi, Hindi, Kannada, Odia, Telugu, Urdu). | Tamil and Malayalam not included due to dataset limitations; accuracy may vary across languages.                                                       | https://ieeexplore.ieee.org/document/10117106 |
+| Image to Text Recognition for Detecting Human and Machine Altered News in Social Media | Abdullah Kamal, Zaid Jamal, Gabriel Rosales, Brian Robinson, Zachary Satny, Haena Rathore - 2023 | Uses Google Cloud Vision API OCR to extract text from news images, demonstrating high accuracy text extraction and reliability for multilingual document digitization.                                  | Accuracy may be affected by variations in image quality and text distortions.                                                                          | https://ieeexplore.ieee.org/document/10325722 |
+| Scan.it Text Recognition, Translation and Conversion                                   | Minal Acharya, Priti Chouhan, Asmita Deshmukh - 2019                                             | A web application using Tesseract OCR for text recognition and ImiTranslator for multilingual translation, focusing on Marathi language recognition.                                                    | Tesseract's accuracy varies significantly for handwritten text; limited to Marathi language; translation accuracy depends on ImTranslator performance. | https://ieeexplore.ieee.org/document/9036818  |
 
 ## Key Findings
 
