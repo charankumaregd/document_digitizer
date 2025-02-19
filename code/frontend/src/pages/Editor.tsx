@@ -8,7 +8,7 @@ interface LocationState {
   originalLanguage: string;
 }
 
-export default function EditorPage() {
+export default function Editor() {
   const location = useLocation();
   const { text: initialText, originalLanguage } =
     (location.state as LocationState) || {

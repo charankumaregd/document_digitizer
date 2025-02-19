@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, FileText, Loader2 } from "lucide-react";
+import { Upload as UploadIcon, FileText, Loader2 } from "lucide-react";
 import { extractText } from "../services/api";
 
-export default function UploadPage() {
+export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [language, setLanguage] = useState("");
@@ -84,7 +84,7 @@ export default function UploadPage() {
               accept="image/*,.pdf"
               onChange={handleFileUpload}
             />
-            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <UploadIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
             <p className="text-gray-600">Click to upload or drag and drop</p>
             <p className="text-sm text-gray-500">PDF, PNG, JPG, JPEG</p>
           </div>

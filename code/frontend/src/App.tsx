@@ -1,17 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import UploadPage from "./pages/UploadPage";
-import EditorPage from "./pages/EditorPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Upload from "./pages/Upload";
+import Editor from "./pages/Editor";
 
 function App() {
   return (
-    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/upload" element={<UploadPage />} />
-        <Route path="/editor" element={<EditorPage />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/editor" element={<Editor />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 
