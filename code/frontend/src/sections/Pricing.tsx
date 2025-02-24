@@ -1,92 +1,121 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
 
 export default function Pricing() {
-  const plans = [
-    {
-      name: "Free",
-      price: "Rs. 0",
-      description: "Ideal for occasional users.",
-      features: [
-        "5 Pages per month",
-        "Basic OCR support",
-        "Downloadable as TXT, PDF, or DOCX",
-        "Free for the first 2 months only",
-      ],
-    },
-    {
-      name: "Basic",
-      price: "Rs. 99",
-      description: "Perfect for light users or small teams.",
-      features: [
-        "20 Pages per month",
-        "Advanced OCR support",
-        "Downloadable as TXT, PDF, or DOCX",
-        "Translation to regional languages",
-      ],
-      isMostPopular: true,
-    },
-    {
-      name: "Pro",
-      price: "Rs. 199",
-      description: "Designed for frequent users and businesses.",
-      features: [
-        "50 Pages per month",
-        "Advanced OCR support",
-        "Downloadable as TXT, PDF, or DOCX",
-        "Translation to regional languages",
-      ],
-    },
-  ];
-
   return (
-    <section id="pricing" className="py-20 md:py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-primary uppercase">
-            Pricing
-          </span>
-          <h2 className="mt-2 text-3xl font-bold mb-4">
+    <section id="pricing" className="space-y-8">
+      <div className="flex flex-col items-center justify-center ">
+        <div className="text-center space-y-2 max-w-3xl">
+          <Badge>Pricing</Badge>
+          <h1 className="text-2xl md:text-3xl font-medium">
             Simple and transparent pricing
-          </h2>
-          <p className="text-lg text-foreground/80">
+          </h1>
+          <p className="md:text-md text-accent-foreground leading-relaxed">
             No hidden costs. No surprises. Start with a 2-month free trial.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {plans.map((plan, index) => (
-            <div
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {plans.map((plan, index) => {
+          return (
+            <Card
               key={index}
-              className={` p-8 rounded-xl border transition space-y-8
-                ${
-                  plan.isMostPopular
-                    ? "border-primary bg-primary/5"
-                    : "border-foreground/20"
-                }
-                `}
+              className={`relative ${plan.isMostPopular && "border-ring"}`}
             >
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
-                <p className="text-4xl font-bold">
-                  {plan.price}
-                  <span className="text-foreground/80 text-base">/month</span>
+              <Badge
+                className={`absolute top-2 right-2 rounded-full ${
+                  !plan.isMostPopular && "hidden"
+                }`}
+              >
+                Popular
+              </Badge>
+              <CardHeader className="border-b pb-4">
+                <CardTitle>{plan.title}</CardTitle>
+                <CardDescription>{plan.description} </CardDescription>
+                <p className="space-x-2">
+                  <span className="text-4xl">{plan.price}</span>
+                  <span className="text-accent-foreground">/ month</span>
                 </p>
-                <p className="text-foreground/80">{plan.description}</p>
-              </div>
-              <button className="w-full py-3 px-4 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition">
-                Get Started
-              </button>
-              <ul className="space-y-3">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center text-foreground/80">
-                    <CheckCircle2 className="h-5 w-5 text-primary mr-2" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  variant={plan.isMostPopular ? "default" : "outline"}
+                  className="w-full"
+                >
+                  Get started
+                </Button>
+                <p className="text-sm font-medium">What&apos;s included</p>
+                <ul className="text-sm space-y-2">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center space-x-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </section>
   );
 }
+
+const plans = [
+  {
+    title: "Free",
+    price: "Rs. 0",
+    description: "For basic and limited use.",
+    features: [
+      "5 pages per month",
+      "Basic OCR tool",
+      "TXT, PDF, DOCX export",
+      "Free for 2 months",
+    ],
+  },
+  {
+    title: "Basic",
+    price: "Rs. 99",
+    description: "For light and personal use.",
+    features: [
+      "20 pages per month",
+      "Advanced OCR tool",
+      "TXT, PDF, DOCX export",
+      "Regional translation",
+    ],
+  },
+  {
+    title: "Pro",
+    price: "Rs. 199",
+    description: "For frequent and business use.",
+    features: [
+      "50 pages per month",
+      "Advanced OCR tool",
+      "TXT, PDF, DOCX export",
+      "Regional translation",
+      "Faster processing",
+    ],
+    isMostPopular: true,
+  },
+  {
+    title: "Premium",
+    price: "Rs. 399",
+    description: "For heavy and professional use.",
+    features: [
+      "Unlimited pages",
+      "Advanced OCR tool",
+      "TXT, PDF, DOCX export",
+      "Multi-language support",
+      "Priority support",
+    ],
+  },
+];

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FileText, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "./ThemeToggle";
+import Logo from "@/assets/svg/logo.svg";
+import { SignedIn, SignedOut, SignOutButton } from "@clerk/clerk-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
 
   const navigation = [
     { name: "Home", href: "/#" },
@@ -21,101 +24,119 @@ export default function Navbar() {
         document.body.style.overflow = "auto";
       }
     }
+
     window.addEventListener("resize", handleResize);
     handleResize();
+
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [isMenuOpen]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-md shadow-md border-b border-foreground/20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+    <nav className="sticky top-0 left-0 right-0 z-50 bg-background border-b">
+      <div className="container mx-auto p-4">
         <div className="flex justify-between items-center">
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <FileText className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">Document Digitizer</span>
+            <img src={Logo} alt="Logo" className="h-6 w-6" />
+            <span className="text-lg font-bold">Document Digitizer</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <div className="flex items-center space-x-8">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-                >
-                  {item.name}
-                </a>
-              ))}
+            {navigation.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-sm text-accent-foreground font-medium hover:underline hover:underline-offset-2"
+              >
+                {item.name}
+              </a>
+            ))}
+
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <SignedOut>
+                <Button variant="outline" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button variant="default" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/register">Sign up</Link>
+                </Button>
+              </SignedOut>
+              <SignedIn>
+                <SignOutButton>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Log out
+                  </Button>
+                </SignOutButton>
+                <Button variant="default" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+              </SignedIn>
             </div>
-            {location.pathname === "/" && (
-              <div className="flex space-x-4">
-                <Link
-                  to="/"
-                  className="text-center px-6 py-2 rounded-lg transition-all duration-200 border border-primary hover:bg-primary/5"
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/"
-                  className="text-center px-6 py-2 rounded-lg transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  Sign up
-                </Link>
-              </div>
-            )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex justify-center items-center">
-            <button
+          {/* Mobile menu button & Theme toggle button */}
+          <div className="md:hidden flex items-center justify-center space-x-2">
+            <ThemeToggle />
+            <Button
+              variant="outline"
+              size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center justify-center text-foreground/70 hover:text-foreground p-2 cursor-pointer"
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+              {isMenuOpen ? <X /> : <Menu />}
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden p-4">
-          <div className="space-y-8 h-screen">
+        <div className="md:hidden container mx-auto p-4 h-screen">
+          <div className="h-1/2 space-y-8">
             {navigation.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="block font-medium text-foreground/70 hover:text-foreground"
+                className="block text-sm text-accent-foreground font-medium hover:underline hover:underline-offset-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </a>
             ))}
-            {location.pathname === "/" && (
-              <div className="flex flex-col space-y-4">
-                <Link
-                  to="/"
-                  className="text-center px-6 py-3 rounded-lg transition-all duration-200 border border-primary hover:bg-primary/5"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Log in
-                </Link>
-                <Link
-                  to="/"
-                  className="text-center px-6 py-3 rounded-lg transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign up
-                </Link>
-              </div>
-            )}
+
+            <div className="h-full flex flex-col space-y-4">
+              <SignedOut>
+                <Button variant="outline" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button variant="default" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/register">Sign up</Link>
+                </Button>
+              </SignedOut>
+              <SignedIn>
+                <SignOutButton>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Log out
+                  </Button>
+                </SignOutButton>
+                <Button variant="default" onClick={() => setIsMenuOpen(false)}>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+              </SignedIn>
+            </div>
           </div>
         </div>
       )}

@@ -1,52 +1,52 @@
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload as UploadIcon, FileText, Loader2 } from "lucide-react";
-import { extractText } from "../services/api";
+import { useDropzone } from "react-dropzone";
+import { FileText, FileUp, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Input } from "@/components/ui/input";
+import { extractText } from "@/services/api";
+import { Label } from "@/components/ui/label";
 
 export default function Upload() {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [language, setLanguage] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
+  const [fileLanguage, setFileLanguage] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingError, setProcessingError] = useState<string | null>(null);
+  const [fileDropError, setFileDropError] = useState<string | null>(null);
 
-  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
-      setError(null);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 1) {
+      setFileDropError("Only one file can be uploaded at a time.");
+      setProcessingError(null);
+      return;
     }
-  }
+    if (acceptedFiles.length === 1) {
+      setFile(acceptedFiles[0]);
+    }
+  }, []);
 
-  function handleDrop(event: React.DragEvent) {
-    event.preventDefault();
-    const droppedFile = event.dataTransfer.files[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(droppedFile);
-      setError(null);
-    }
-  }
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+  });
 
   async function handleSubmit() {
     if (!file) return;
 
+    setFileDropError(null);
     setIsProcessing(true);
-    setError(null);
+    setProcessingError(null);
 
     try {
-      const result = await extractText(file, language);
+      const result = await extractText(file, fileLanguage);
       navigate("/editor", {
         state: {
           text: result.text,
@@ -55,7 +55,7 @@ export default function Upload() {
       });
     } catch (error) {
       console.error("Error processing file:", error);
-      setError(
+      setProcessingError(
         error instanceof Error ? error.message : "Failed to process file"
       );
     } finally {
@@ -64,95 +64,99 @@ export default function Upload() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Upload Document
-          </h1>
+    <main>
+      <div className="py-8 space-y-8">
+        {/* heading */}
+        <h1 className="text-2xl font-bold">Upload Document</h1>
 
-          <div
-            className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-indigo-500 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*,.pdf"
-              onChange={handleFileUpload}
-            />
-            <UploadIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <p className="text-gray-600">Click to upload or drag and drop</p>
-            <p className="text-sm text-gray-500">PDF, PNG, JPG, JPEG</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="flex flex-col space-y-8">
+            {/* filedrop area */}
+            <div
+              {...getRootProps()}
+              className={`flex flex-col items-center justify-center w-full h-64
+          text-muted-foreground bg-primary-foreground
+          border-2 border-dashed hover:border-ring rounded-lg 
+          p-8 space-y-2 cursor-pointer transition-colors
+          ${isDragActive ? "border-ring" : ""}
+          ${file ? "" : ""}`}
+            >
+              <Input {...getInputProps()} />
+              {file ? (
+                <>
+                  <FileText />
+                  <span className="text-sm font-medium">{file.name}</span>
+                  <span className="text-xs">
+                    {(file.size / 1024).toFixed(2)} KB
+                  </span>
+                </>
+              ) : (
+                <>
+                  <FileUp />
+                  <span className="text-sm font-medium">
+                    Click to upload or drag and drop
+                  </span>
+                  <span className="text-xs">PNG, JPG, JPEG</span>
+                </>
+              )}
+            </div>
+
+            {fileDropError && (
+              <div className="border border-destructive rounded-md w-fit px-4 py-2">
+                <span className="text-destructive-foreground">
+                  {fileDropError}
+                </span>
+              </div>
+            )}
           </div>
 
-          {error && (
-            <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-lg">
-              {error}
+          <div className="flex flex-col w-fit space-y-8">
+            {/* select language */}
+            <div className="flex flex-col space-y-2">
+              <Label className="text-sm font-medium">File Language</Label>
+              <Select onValueChange={setFileLanguage} value={fileLanguage}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">Auto detect</SelectItem>
+                  <SelectItem value="eng">English</SelectItem>
+                  <SelectItem value="hin">Hindi</SelectItem>
+                  <SelectItem value="kan">Kannada</SelectItem>
+                  <SelectItem value="mal">Malayalam</SelectItem>
+                  <SelectItem value="tam">Tamil</SelectItem>
+                  <SelectItem value="tel">Telugu</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
 
-          {preview && (
-            <div className="mt-8 space-y-6">
-              <div className="relative rounded-lg overflow-hidden">
-                <img
-                  src={preview}
-                  alt="Document preview"
-                  className="w-full object-contain max-h-96"
-                />
+            {/* continue button */}
+            <Button
+              onClick={handleSubmit}
+              disabled={isProcessing || !file || !fileLanguage}
+              className="flex items-center justify-center gap-2"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <span>Process Document</span>
+              )}
+            </Button>
+
+            {/* processing error */}
+            {processingError && (
+              <div className="border border-destructive rounded-md w-fit px-4 py-2">
+                <span className="text-destructive-foreground">
+                  {processingError}
+                </span>
               </div>
-
-              <div className="space-y-8">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Document Language (Optional)
-                  </label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  >
-                    <option value="">Select Language</option>
-                    <option value="ben">Bengali</option>
-                    <option value="eng">English</option>
-                    <option value="guj">Gujarati</option>
-                    <option value="hin">Hindi</option>
-                    <option value="kan">Kannada</option>
-                    <option value="mal">Malayalam</option>
-                    <option value="mar">Marathi</option>
-                    <option value="ori">Odia</option>
-                    <option value="pan">Punjabi</option>
-                    <option value="tam">Tamil</option>
-                    <option value="tel">Telugu</option>
-                    <option value="urd">Urdu</option>
-                  </select>
-                </div>
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={isProcessing || !file}
-                  className="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition-colors flex items-center justify-center space-x-2"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="animate-spin h-5 w-5" />
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="h-5 w-5" />
-                      <span>Process Document</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
