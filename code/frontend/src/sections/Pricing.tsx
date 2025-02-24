@@ -111,7 +111,7 @@ const plans = [
     price: "Rs. 399",
     description: "For heavy and professional use.",
     features: [
-      "Unlimited pages",
+      "100 pages per month",
       "Advanced OCR tool",
       "TXT, PDF, DOCX export",
       "Multi-language support",
