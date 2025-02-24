@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { FileText, FileUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { extractText } from "@/services/api";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,10 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { Input } from "@/components/ui/input";
-import { extractText } from "@/services/api";
-import { Label } from "@/components/ui/label";
 
 export default function Upload() {
   const navigate = useNavigate();
