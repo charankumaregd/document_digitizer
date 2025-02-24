@@ -70,43 +70,33 @@ export default function Upload() {
         <h1 className="text-2xl font-bold">Upload Document</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col space-y-8">
-            {/* filedrop area */}
-            <div
-              {...getRootProps()}
-              className={`flex flex-col items-center justify-center w-full h-64
+          {/* filedrop area */}
+          <div
+            {...getRootProps()}
+            className={`flex flex-col items-center justify-center w-full h-64
           text-muted-foreground bg-primary-foreground
           border-2 border-dashed hover:border-ring rounded-lg 
           p-8 space-y-2 cursor-pointer transition-colors
           ${isDragActive ? "border-ring" : ""}
           ${file ? "" : ""}`}
-            >
-              <Input {...getInputProps()} />
-              {file ? (
-                <>
-                  <FileText />
-                  <span className="text-sm font-medium">{file.name}</span>
-                  <span className="text-xs">
-                    {(file.size / 1024).toFixed(2)} KB
-                  </span>
-                </>
-              ) : (
-                <>
-                  <FileUp />
-                  <span className="text-sm font-medium">
-                    Click to upload or drag and drop
-                  </span>
-                  <span className="text-xs">PNG, JPG, JPEG</span>
-                </>
-              )}
-            </div>
-
-            {fileDropError && (
-              <div className="border border-destructive rounded-md w-fit px-4 py-2">
-                <span className="text-destructive-foreground">
-                  {fileDropError}
+          >
+            <Input {...getInputProps()} />
+            {file ? (
+              <>
+                <FileText />
+                <span className="text-sm font-medium">{file.name}</span>
+                <span className="text-xs">
+                  {(file.size / 1024).toFixed(2)} KB
                 </span>
-              </div>
+              </>
+            ) : (
+              <>
+                <FileUp />
+                <span className="text-sm font-medium">
+                  Click to upload or drag and drop
+                </span>
+                <span className="text-xs">PNG, JPG, JPEG</span>
+              </>
             )}
           </div>
 
@@ -145,17 +135,24 @@ export default function Upload() {
                 <span>Process Document</span>
               )}
             </Button>
-
-            {/* processing error */}
-            {processingError && (
-              <div className="border border-destructive rounded-md w-fit px-4 py-2">
-                <span className="text-destructive-foreground">
-                  {processingError}
-                </span>
-              </div>
-            )}
           </div>
         </div>
+
+        {/* filedrop error */}
+        {fileDropError && (
+          <div className="border border-destructive rounded-md w-fit px-4 py-2">
+            <span className="text-destructive-foreground">{fileDropError}</span>
+          </div>
+        )}
+
+        {/* processing error */}
+        {processingError && (
+          <div className="border border-destructive rounded-md w-fit px-4 py-2">
+            <span className="text-destructive-foreground">
+              {processingError}
+            </span>
+          </div>
+        )}
       </div>
     </main>
   );

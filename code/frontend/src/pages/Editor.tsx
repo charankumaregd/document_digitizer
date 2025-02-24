@@ -113,14 +113,14 @@ export default function Editor() {
         {/* heading */}
         <h1 className="text-2xl font-bold">Edit Document</h1>
 
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* text area */}
           <Textarea
             value={text}
             onChange={(e) => handleTextChange(e.target.value)}
             disabled={isTranslating || isDownloading}
             placeholder="Your text will appear here..."
-            className="bg-primary-foreground max-w-4xl"
+            className="bg-primary-foreground"
           />
 
           <div className="flex flex-col w-fit space-y-8">
@@ -203,14 +203,13 @@ export default function Editor() {
               )}
             </Button>
           </div>
-
-          {/* error */}
-          {error && (
-            <div className="border border-destructive rounded-md w-fit px-4 py-2">
-              <span className="text-destructive-foreground">{error}</span>
-            </div>
-          )}
         </div>
+        {/* error */}
+        {error && (
+          <div className="border border-destructive rounded-md w-fit px-4 py-2">
+            <span className="text-destructive-foreground">{error}</span>
+          </div>
+        )}
       </div>
     </main>
   );

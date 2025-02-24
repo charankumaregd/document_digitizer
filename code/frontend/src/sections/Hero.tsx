@@ -2,6 +2,7 @@ import { ArrowRight, Files } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
+import HeroImg from "@/assets/images/hero.png";
 
 export default function Hero() {
   return (
@@ -41,7 +42,10 @@ export default function Hero() {
         </Button>
       </div>
       <div className="flex items-center justify-center pt-8">
-        <div className="bg-secondary h-96 w-4xl rounded-xl"></div>
+        <img
+          src={HeroImg}
+          className="bg-secondary border p-2 w-4xl rounded-2xl"
+        ></img>
       </div>
     </section>
   );

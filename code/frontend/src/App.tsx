@@ -66,7 +66,7 @@ function AppRoutes() {
       {/* Protected Route without Layout */}
       <Route element={<ProtectedRoute />}>
         <Route path="/upload" element={<Upload />} />
-        <Route path="/editor" element={<Editor />} />{" "}
+        <Route path="/editor" element={<Editor />} />
       </Route>
 
       {/* Catch-all for unknown routes */}
